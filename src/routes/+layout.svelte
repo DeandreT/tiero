@@ -13,9 +13,7 @@
 	} from '@skeletonlabs/skeleton';
 
 	// @ts-ignore
-	import MdiCog from 'virtual:icons/mdi/cog';
-	import MdiGithub from 'virtual:icons/mdi/github';
-	import MdiAccount from 'virtual:icons/mdi/account';
+	import Icon from '@iconify/svelte';
 
 	// Highlight JS
 	import hljs from 'highlight.js/lib/core';
@@ -75,19 +73,19 @@
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<button class="btn variant-filled-primary" use:popup={settingsPopup}>
-					<MdiCog />
+					<Icon icon="mdi:cog" />
 				</button>
 				<div class="card p-4" data-popup="settingsMenu">
 					<nav class="list-nav">
 						<ul>
 							<li>
 								<a href="/account" class="text-lg">
-									<MdiAccount />
+									<Icon icon="mdi:account" />
 								</a>
 							</li>
 							<li>
 								<button class="text-lg" on:click={() => modalStore.trigger(settingsModal)}>
-									<MdiCog />
+									<Icon icon="mdi:cog" />
 								</button>
 							</li>
 						</ul>
@@ -99,7 +97,7 @@
 					target="_blank"
 					rel="noreferrer"
 				>
-					<MdiGithub />
+					<Icon icon="mdi:github" />
 				</a>
 			</svelte:fragment>
 		</AppBar>
