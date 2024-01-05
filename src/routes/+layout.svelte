@@ -1,6 +1,5 @@
 <script>
 	// @ts-nocheck
-
 	import '../app.postcss';
 	import {
 		AppShell,
@@ -14,6 +13,7 @@
 
 	// @ts-ignore
 	import Icon from '@iconify/svelte';
+	import astra from '$lib/assets/astra.svg';
 
 	// Highlight JS
 	import hljs from 'highlight.js/lib/core';
@@ -69,7 +69,7 @@
 		<!-- App Bar -->
 		<AppBar>
 			<svelte:fragment slot="lead">
-				<strong class="text-xl uppercase">Tiero</strong>
+				<img src={astra} alt="Tiero Logo" class="w-10 h-10" />
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<button class="btn variant-filled-primary" use:popup={settingsPopup}>

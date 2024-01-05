@@ -1,6 +1,7 @@
 <script>
 	// @ts-nocheck
 	import { flip } from 'svelte/animate';
+	import Icon from '@iconify/svelte';
 	import Tier from './Tier.svelte';
 
 	let tiers = [
@@ -121,6 +122,9 @@
 		const tier = tiers[index];
 		tiers = [...tiers.slice(0, index), tiers[index + 1], tier, ...tiers.slice(index + 2)];
 	}
+
+	const tierButtonClass = 'btn variant-filled flex-col justify-center items-center';
+	const tierButtonStyle = 'margin: 0 !important';
 </script>
 
 <div
@@ -142,9 +146,21 @@
 		</div>
 	{/each}
 </div>
-<div class="flex flex-row space-x-4 fixed bottom-2 bg-gray-800 rounded-lg">
-	<button class="btn" on:click={addTierTop}>Add Tier Top</button>
-	<button class="btn" on:click={addTierBottom}>Add Tier Bottom</button>
-	<button class="btn" on:click={removeTierTop}>Remove Tier Top</button>
-	<button class="btn" on:click={removeTierBottom}>Remove Tier Bottom</button>
+<div class="flex flex-row space-x-4 p-2 fixed bottom-2 bg-gray-800 rounded-lg">
+	<button class={tierButtonClass} on:click={addTierTop}>
+		<Icon style={tierButtonStyle} icon="mdi:chevron-up" />
+		<Icon style={tierButtonStyle} icon="mdi:plus" />
+	</button>
+	<button class={tierButtonClass} on:click={addTierBottom}>
+		<Icon style={tierButtonStyle} icon="mdi:plus" />
+		<Icon style={tierButtonStyle} icon="mdi:chevron-down" />
+	</button>
+	<button class={tierButtonClass} on:click={removeTierTop}>
+		<Icon style={tierButtonStyle} icon="mdi:chevron-up" />
+		<Icon style={tierButtonStyle} icon="mdi:minus" />
+	</button>
+	<button class={tierButtonClass} on:click={removeTierBottom}>
+		<Icon style={tierButtonStyle} icon="mdi:minus" />
+		<Icon style={tierButtonStyle} icon="mdi:chevron-down" />
+	</button>
 </div>
