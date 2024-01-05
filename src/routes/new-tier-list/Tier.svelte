@@ -1,50 +1,101 @@
 <script>
-  import Icon from '@iconify/svelte';
+	import { dndzone } from 'svelte-dnd-action';
+	import Icon from '@iconify/svelte';
 
-	export let tierName = 'New Tier';
-	export let tierColor = '#000000';
+	import Item from './Item.svelte';
 
-  /**
+	/**
+	 * @type {string}
+	 */
+	 export let name;
+	/**
+	 * @type {string}
+	 */
+	 export let color;
+	/**
+	 * @type {number}
+	 */
+	export let index;
+	/**
+	 * @type {number}
+	 */
+	export let tierListLength;
+
+	/**
+	 * @type {Array<{name: string, image: string, id: string}>}
+	 */
+	export let items;
+	/**
 	 * @type {() => void}
 	 */
-   export let onMoveUp;
-  /**
+	export let onMoveUp;
+	/**
 	 * @type {() => void}
 	 */
-   export let onMoveDown;
+	export let onMoveDown;
 
-  function emitMoveUp() {
-    onMoveUp();
-  }
+	function emitMoveUp() {
+		onMoveUp();
+	}
 
-  function emitMoveDown() {
-    onMoveDown();
-  }
+	function emitMoveDown() {
+		onMoveDown();
+	}
+
+	/**
+	 * @param {{ detail: { items: { name: string; image: string; id: string; }[]; }; }} e
+	 */
+	function handleConsider(e) {
+		items = e.detail.items;
+	}
+
+	/**
+	 * @param {{ detail: { items: { name: string; image: string; id: string; }[]; }; }} e
+	 */
+	function handleFinalize(e) {
+		items = e.detail.items;
+	}
+
+	const tierRowClass = "tier-row w-full flex flex-row border border-1 border-black h-28 bg-zinc-900"
+	const labelClass = "label max-w-32 h-28 flex text-center justify-center items-center border-r border-black"
 </script>
 
-<div class="tier-row w-full flex flex-row border border-1 border-black min-h-28">
+<div class={tierRowClass}>
 	<div
-		class="label max-w-32 min-h-28 flex text-center justify-center items-center"
-		style="background-color: {tierColor}"
+		class={labelClass}
+		style="background-color: {color}"
 	>
 		<input
-			bind:value={tierName}
-			class="label-text text-center text-2xl font-bold w-full h-full bg-transparent"
+			type="text"
+			bind:value={name}
+			class="label-text text-center font-bold w-full h-full bg-transparent"
 		/>
 	</div>
-  <div class="tier flex p-0 m-0 w-full flex-row bg-zinc-900">
-    <div class="tier-item"></div>
-    <div class="tier-item"></div>
-    <div class="tier-item"></div>
-  </div>
-  <div class="tier-controls flex flex-col justify-center items-center bg-black">
-    <button class="btn-icon" on:click={emitMoveUp}>
-      <Icon icon="mdi:chevron-up" />
-    </button>
-    <button class="btn-icon " on:click={emitMoveDown}>
-      <Icon icon="mdi:chevron-down" />
-    </button>
-  </div>
+	<div
+		class="tier flex p-0 m-0 w-full flex-row"
+		use:dndzone={{ items }}
+		on:consider={handleConsider}
+		on:finalize={handleFinalize}
+	>
+		{#each items as item (item.id)}
+			<Item id={item.id} name={item.name} image={item.image} {index} />
+		{/each}
+	</div>
+	<div
+		class="btn-group-vertical flex flex-col justify-center items-center"
+		style="border-radius: 0px;"
+	>
+		{#if index !== 0}
+			<button class="btn-icon-xl" on:click={emitMoveUp}>
+				<Icon icon="mdi:chevron-up" />
+			</button>
+		{/if}
+		{#if index !== tierListLength - 1}
+			<button class="btn-icon-xl" on:click={emitMoveDown}>
+				<Icon icon="mdi:chevron-down" />
+			</button>
+		{/if}
+	</div>
 </div>
 
 <style>
