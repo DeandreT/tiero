@@ -1,5 +1,8 @@
 <script>
+	import { createEventDispatcher } from 'svelte';
+	const dispatchEvent = createEventDispatcher();
 	import { dndzone } from 'svelte-dnd-action';
+	import { flip } from 'svelte/animate';
 	import Icon from '@iconify/svelte';
 
 	import Item from './Item.svelte';
@@ -7,11 +10,11 @@
 	/**
 	 * @type {string}
 	 */
-	 export let name;
+	export let name;
 	/**
 	 * @type {string}
 	 */
-	 export let color;
+	export let color;
 	/**
 	 * @type {number}
 	 */
@@ -25,22 +28,6 @@
 	 * @type {Array<{name: string, image: string, id: string}>}
 	 */
 	export let items;
-	/**
-	 * @type {() => void}
-	 */
-	export let onMoveUp;
-	/**
-	 * @type {() => void}
-	 */
-	export let onMoveDown;
-
-	function emitMoveUp() {
-		onMoveUp();
-	}
-
-	function emitMoveDown() {
-		onMoveDown();
-	}
 
 	/**
 	 * @param {{ detail: { items: { name: string; image: string; id: string; }[]; }; }} e
@@ -56,15 +43,17 @@
 		items = e.detail.items;
 	}
 
-	const tierRowClass = "tier-row w-full flex flex-row border border-1 border-black h-28 bg-zinc-900"
-	const labelClass = "label max-w-32 h-28 flex text-center justify-center items-center border-r border-black"
+	const tierRowClass =
+		'tier-row w-full flex flex-row border border-1 border-black h-28 bg-zinc-900';
+	const labelClass =
+		'label max-w-32 h-28 relative flex text-center justify-center items-center border-r border-black';
 </script>
 
 <div class={tierRowClass}>
-	<div
-		class={labelClass}
-		style="background-color: {color}"
-	>
+	<div class={labelClass} style="background-color: {color}">
+		<button class="absolute left-0 top-0 text-black" on:click={() => dispatchEvent('removeTier')}>
+			<Icon icon="mdi:close" />
+		</button>
 		<input
 			type="text"
 			bind:value={name}
@@ -78,7 +67,9 @@
 		on:finalize={handleFinalize}
 	>
 		{#each items as item (item.id)}
-			<Item id={item.id} name={item.name} image={item.image} {index} />
+			<div animate:flip={{ duration: 200 }}>
+				<Item name={item.name} image={item.image} />
+			</div>
 		{/each}
 	</div>
 	<div
@@ -86,12 +77,12 @@
 		style="border-radius: 0px;"
 	>
 		{#if index !== 0}
-			<button class="btn-icon-xl" on:click={emitMoveUp}>
+			<button class="btn-icon-xl" on:click={() => dispatchEvent('moveUp')}>
 				<Icon icon="mdi:chevron-up" />
 			</button>
 		{/if}
 		{#if index !== tierListLength - 1}
-			<button class="btn-icon-xl" on:click={emitMoveDown}>
+			<button class="btn-icon-xl" on:click={() => dispatchEvent('moveDown')}>
 				<Icon icon="mdi:chevron-down" />
 			</button>
 		{/if}

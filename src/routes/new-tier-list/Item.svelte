@@ -1,13 +1,5 @@
 <script>
 	/**
-	 * @type {number}
-	 */
-	export let index;
-	/**
-	 * @type {number}
-	 */
-	export let id;
-	/**
 	 * @type {string}
 	 */
 	export let name;
