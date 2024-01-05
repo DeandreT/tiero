@@ -5,7 +5,7 @@
 	import { flip } from 'svelte/animate';
 	import Icon from '@iconify/svelte';
 
-	import Item from './Item.svelte';
+	import Item from '$lib/components/Item.svelte';
 
 	/**
 	 * @type {string}
@@ -46,7 +46,7 @@
 	const tierRowClass =
 		'tier-row w-full flex flex-row border border-1 border-black h-28 bg-zinc-900';
 	const labelClass =
-		'label max-w-32 h-28 relative flex text-center justify-center items-center border-r border-black';
+		'label w-32 h-28 relative flex text-center justify-center items-center border-r border-black';
 </script>
 
 <div class={tierRowClass}>
@@ -96,8 +96,11 @@
 		outline: none;
 		color: #000000;
 	}
-	.label-text::selection,
+
 	.label-text::-moz-selection {
+		background: white !important;
+	}
+	.label-text::selection {
 		background: white !important;
 	}
 </style>

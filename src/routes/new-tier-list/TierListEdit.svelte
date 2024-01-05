@@ -6,29 +6,31 @@
 
 	let tiers = [
 		{
+			id: 0,
 			name: 'Tier1',
 			color: '#ff0000',
 			items: [
 				{
 					name: 'Item1',
 					image: 'https://via.placeholder.com/125',
-					id: 1
+					id: 0
 				},
 				{
 					name: 'Item2',
 					image: 'https://via.placeholder.com/150',
-					id: 2
+					id: 1
 				}
 			]
 		},
 		{
+			id: 1,
 			name: 'Tier2',
 			color: '#00ff00',
 			items: [
 				{
 					name: 'Item3',
 					image: 'https://via.placeholder.com/125',
-					id: 3
+					id: 2
 				}
 			]
 		}
@@ -131,7 +133,7 @@
 	class="tier-list space-y-0 text-center flex flex-col items-center w-full overflow-y-scroll"
 	style={'max-height: 80vh;'}
 >
-	{#each tiers as { name, color, items }, index (name)}
+	{#each tiers as { id, name, color, items }, index (id)}
 		<div class="w-full" animate:flip={{ duration: 200 }}>
 			<Tier
 				{index}

@@ -46,6 +46,7 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "1.5.3",
-    "highlight.js": "11.9.0"
+    "highlight.js": "11.9.0",
+    "sqlite3": "^5.1.7-rc.0"
   }
 }
