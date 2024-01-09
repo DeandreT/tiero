@@ -4,16 +4,20 @@
 	import {
 		AppShell,
 		AppBar,
+		TabGroup,
+		TabAnchor,
 		popup,
 		storePopup,
 		Modal,
 		getModalStore,
-    initializeStores,
+		initializeStores
 	} from '@skeletonlabs/skeleton';
 
 	// @ts-ignore
 	import Icon from '@iconify/svelte';
 	import astra from '$lib/assets/astra.svg';
+
+	import { page } from '$app/stores';
 
 	// Highlight JS
 	import hljs from 'highlight.js/lib/core';
@@ -48,29 +52,55 @@
 		target: 'settingsMenu'
 	};
 
-  initializeStores();
+	initializeStores();
 
-  const modalStore = getModalStore();
+	const modalStore = getModalStore();
 
 	const modalRegistry = {
-		settingsModal: { ref: SettingsModal },
+		settingsModal: { ref: SettingsModal }
 	};
 
 	const settingsModal = {
 		type: 'component',
 		component: 'settingsModal',
-		title: 'Settings',
+		title: 'Settings'
 	};
 </script>
+
 <Modal components={modalRegistry} />
 <!-- App Shell -->
 <AppShell>
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
-		<AppBar>
+		<AppBar slotTrail="place-content-end">
 			<svelte:fragment slot="lead">
 				<img src={astra} alt="Tiero Logo" class="w-10 h-10" />
 			</svelte:fragment>
+			<TabGroup
+				active="variant-filled-primary"
+				hover="hover:variant-soft-primary"
+				flex="flex-1 lg:flex-none"
+				rounded=""
+				border=""
+				class="bg-surface-100-800-token w-full"
+			>
+				<TabAnchor href="/new-tier-list" selected={$page.url.pathname === '/new-tier-list'}>
+					<svelte:fragment slot="lead">
+						<div class="flex justify-center items-center">
+							<Icon class="flex justify-center items-center" icon="fa:pencil" />
+						</div>
+					</svelte:fragment>
+					<span class="tab-label">New List</span>
+				</TabAnchor>
+				<TabAnchor href="/tier-lists" selected={$page.url.pathname === '/tier-lists'}>
+					<svelte:fragment slot="lead">
+						<div class="flex justify-center items-center">
+							<Icon class="flex justify-center items-center" icon="fa:dot-circle-o" />
+						</div>
+					</svelte:fragment>
+					<span class="tab-label">My Lists</span>
+				</TabAnchor>
+			</TabGroup>
 			<svelte:fragment slot="trail">
 				<button class="btn variant-filled-primary" use:popup={settingsPopup}>
 					<Icon icon="mdi:cog" />

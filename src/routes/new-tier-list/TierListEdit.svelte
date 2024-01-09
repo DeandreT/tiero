@@ -7,7 +7,7 @@
 	let tiers = [
 		{
 			id: 0,
-			name: 'Tier1',
+			name: 'New Tier 1',
 			color: '#ff0000',
 			items: [
 				{
@@ -24,7 +24,7 @@
 		},
 		{
 			id: 1,
-			name: 'Tier2',
+			name: 'New Tier 2',
 			color: '#00ff00',
 			items: [
 				{
@@ -35,6 +35,14 @@
 			]
 		}
 	];
+
+	function findUniqueId() {
+		let id = 0;
+		while (tiers.some((tier) => tier.id === id)) {
+			id++;
+		}
+		return id;
+	}
 
 	function findUniqueTierName() {
 		let name = 'New Tier 1';
@@ -56,53 +64,48 @@
 		return color;
 	}
 
+	function addTier(position) {
+		tiers = [
+			...tiers.slice(0, position),
+			{
+				id: findUniqueId(),
+				name: findUniqueTierName(),
+				color: findUniqueTierColor(),
+				items: []
+			},
+			...tiers.slice(position)
+		];
+	}
+
 	/**
 	 * Adds a new tier at the top of the tiers array.
 	 */
 	function addTierTop() {
-		const tierName = findUniqueTierName();
-		const tierColor = findUniqueTierColor();
-		tiers = [
-			{
-				name: tierName,
-				color: tierColor,
-				items: []
-			},
-			...tiers
-		];
+		addTier(0);
 	}
 
 	/**
 	 * Adds a new tier at the bottom of the tiers array.
 	 */
 	function addTierBottom() {
-		const tierName = findUniqueTierName();
-		const tierColor = findUniqueTierColor();
-		tiers = [
-			...tiers,
-			{
-				name: tierName,
-				color: tierColor,
-				items: []
-			}
-		];
+		addTier(tiers.length);
 	}
 
-	function removeTier(index) {
-		tiers = [...tiers.slice(0, index), ...tiers.slice(index + 1)];
+	function removeTier(position) {
+		tiers = [...tiers.slice(0, position), ...tiers.slice(position + 1)];
 	}
 	/**
 	 * Removes the top tier from the `tiers` array.
 	 */
 	function removeTierTop() {
-		tiers = tiers.slice(1);
+		removeTier(0);
 	}
 
 	/**
 	 * Removes the bottom tier from the `tiers` array.
 	 */
 	function removeTierBottom() {
-		tiers = tiers.slice(0, -1);
+		removeTier(tiers.length - 1);
 	}
 
 	/**
