@@ -1,5 +1,6 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
+	import { enhance } from '$app/forms';
 	const dispatchEvent = createEventDispatcher();
 	import { dndzone } from 'svelte-dnd-action';
 	import { flip } from 'svelte/animate';
@@ -15,6 +16,10 @@
 	 * @type {string}
 	 */
 	export let color;
+	/**
+	 * @type {string}
+	 */
+	export let id;
 	/**
 	 * @type {number}
 	 */
@@ -51,9 +56,12 @@
 
 <div class={tierRowClass}>
 	<div class={labelClass} style="background-color: {color}">
-		<button class="absolute left-0 top-0 text-black" on:click={() => dispatchEvent('removeTier')}>
-			<Icon icon="mdi:close" />
-		</button>
+		<form method="POST" action="?/remove" use:enhance>
+			<input type="hidden" name="tierID" value={id} />
+			<button class="absolute left-0 top-0 text-black">
+				<Icon icon="mdi:close" />
+			</button>
+		</form>
 		<input
 			type="text"
 			bind:value={name}
@@ -62,7 +70,7 @@
 	</div>
 	<div
 		class="tier flex p-0 m-0 w-full flex-row"
-		use:dndzone={{ items }}
+		use:dndzone={{ items, type: 'item' }}
 		on:consider={handleConsider}
 		on:finalize={handleFinalize}
 	>
@@ -77,14 +85,22 @@
 		style="border-radius: 0px;"
 	>
 		{#if index !== 0}
-			<button class="btn-icon-xl" on:click={() => dispatchEvent('moveUp')}>
-				<Icon icon="mdi:chevron-up" />
-			</button>
+			<form method="POST" action="?/move" use:enhance>
+				<input type="hidden" name="tierID" value={id} />
+				<input type="hidden" name="direction" value="up" />
+				<button class="btn-icon-xl">
+					<Icon icon="mdi:chevron-up" />
+				</button>
+			</form>
 		{/if}
 		{#if index !== tierListLength - 1}
-			<button class="btn-icon-xl" on:click={() => dispatchEvent('moveDown')}>
-				<Icon icon="mdi:chevron-down" />
-			</button>
+			<form method="POST" action="?/move" use:enhance>
+				<input type="hidden" name="tierID" value={id} />
+				<input type="hidden" name="direction" value="down" />
+				<button class="btn-icon-xl">
+					<Icon icon="mdi:chevron-down" />
+				</button>
+			</form>
 		{/if}
 	</div>
 </div>

@@ -1,183 +1,74 @@
-import sqlite3 from 'sqlite3';
-const db = new sqlite3.Database('db.sqlite');
+import { Database } from 'bun:sqlite';
 
-db.serialize(() => {
-	db.parallelize(() => {
-		db.run(
-			`CREATE TABLE
-    IF NOT EXISTS tiers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        list_id INTEGER NOT NULL,
-        position INTEGER NOT NULL,
-        color TEXT NOT NULL,
-        name TEXT NOT NULL,
-        description TEXT NOT NULL,
-        last_updated INTEGER NOT NULL,
-        updated_by INTEGER NOT NULL,
-        created_at INTEGER NOT NULL,
-        created_by INTEGER NOT NULL,
-        deleted_by INTEGER,
-        deleted INTEGER
-    )`,
-			function () {
-				db.run(`INSERT INTO tiers (
-        list_id,
-        position,
-        color,
-        name,
-        description,
-        last_updated,
-        updated_by,
-        created_at,
-        created_by
-      ) VALUES (
-        1,
-        0,
-        'red',
-        'Test Tier 1',
-        'This is a test tier',
-        0,
-        0,
-        0,
-        0
-      )`);
-				db.run(`INSERT INTO tiers (
-        list_id,
-        position,
-        color,
-        name,
-        description,
-        last_updated,
-        updated_by,
-        created_at,
-        created_by
-      ) VALUES (
-        1,
-        1,
-        'blue',
-        'Test Tier 2',
-        'This is a test tier',
-        0,
-        0,
-        0,
-        0
-      )`);
-				db.run(`INSERT INTO tiers (
-        list_id,
-        position,
-        color,
-        name,
-        description,
-        last_updated,
-        updated_by,
-        created_at,
-        created_by
-      ) VALUES (
-        1,
-        2,
-        'green',
-        'Test Tier 3',
-        'This is a test tier',
-        0,
-        0,
-        0,
-        0
-      )`);
-			}
-		);
+const db = new Database('db.sqlite');
+db.exec('PRAGMA journal_mode = WAL;');
 
-		db.run(
-			`CREATE TABLE IF NOT EXISTS lists (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      description TEXT NOT NULL,
-      last_updated INTEGER NOT NULL,
-      updated_by INTEGER NOT NULL,
-      created_at INTEGER NOT NULL,
-      created_by INTEGER NOT NULL,
-      deleted_by INTEGER,
-      deleted INTEGER
-    )`,
-			function () {
-				db.run(`INSERT INTO lists (
-        name,
-        description,
-        last_updated,
-        updated_by,
-        created_at,
-        created_by
-      ) VALUES (
-        'Test List',
-        'This is a test list',
-        0,
-        0,
-        0,
-        0
-      )`);
-			}
-		);
-		db.run(
-			`CREATE TABLE IF NOT EXISTS items (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      tier_id INTEGER NOT NULL,
-      position INTEGER NOT NULL,
-      name TEXT NOT NULL,
-      description TEXT NOT NULL,
-      image TEXT NOT NULL,
-      last_updated INTEGER NOT NULL,
-      updated_by INTEGER NOT NULL,
-      created_at INTEGER NOT NULL,
-      created_by INTEGER NOT NULL,
-      deleted_by INTEGER,
-      deleted INTEGER
-    )`,
-			function () {
-				db.run(`INSERT INTO items (
-        tier_id,
-        position,
-        name,
-        description,
-        image,
-        last_updated,
-        updated_by,
-        created_at,
-        created_by
-      ) VALUES (
-        1,
-        0,
-        'Test Item 1',
-        'This is a test item',
-        'https://via.placeholder.com/150',
-        0,
-        0,
-        0,
-        0
-      )`);
+const createTable = async (/** @type {string} */ name, /** @type {string} */ schema) => {
+	const query = db.query(`CREATE TABLE IF NOT EXISTS ${name} (${schema});`);
+	query.run();
+};
 
-				db.run(`INSERT INTO items (
-        tier_id,
-        position,
-        name,
-        description,
-        image,
-        last_updated,
-        updated_by,
-        created_at,
-        created_by
-      ) VALUES (
-        1,
-        1,
-        'Test Item 2',
-        'This is a test item',
-        'https://via.placeholder.com/150',
-        0,
-        0,
-        0,
-        0
-      )`);
-			}
-		);
-	});
-});
+const createIndex = async (/** @type {string} */ tableName, /** @type {string} */ indexName, /** @type {string} */ columns) => {
+  const query = db.query(`CREATE INDEX IF NOT EXISTS ${indexName} ON ${tableName} (${columns});`);
+  query.run();
+};
+
+// Create tables if they don't exist
+createTable(
+	'tiers',
+	`
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  list_id INTEGER NOT NULL,
+  position INTEGER NOT NULL,
+  color TEXT NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  last_updated INTEGER NOT NULL,
+  updated_by INTEGER NOT NULL,
+  created_at INTEGER NOT NULL,
+  created_by INTEGER NOT NULL,
+  deleted_by INTEGER,
+  deleted INTEGER
+`
+);
+createTable(
+	'lists',
+	`
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  last_updated INTEGER NOT NULL,
+  updated_by INTEGER NOT NULL,
+  created_at INTEGER NOT NULL,
+  created_by INTEGER NOT NULL,
+  deleted_by INTEGER,
+  deleted INTEGER
+`
+);
+createTable(
+	'items',
+	`
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tier_id INTEGER NOT NULL,
+  position INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  image TEXT NOT NULL,
+  last_updated INTEGER NOT NULL,
+  updated_by INTEGER NOT NULL,
+  created_at INTEGER NOT NULL,
+  created_by INTEGER NOT NULL,
+  deleted_by INTEGER,
+  deleted INTEGER
+`
+);
+
+// Indexes for foreign keys
+createIndex('items', 'idx_items_tier_id', 'tier_id');
+createIndex('tiers', 'idx_tiers_list_id', 'list_id');
+
+// Indexes for other frequently queried columns
+createIndex('items', 'idx_items_position', 'position');
+createIndex('tiers', 'idx_tiers_name', 'name');
 
 export default db;
