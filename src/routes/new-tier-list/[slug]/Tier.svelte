@@ -1,5 +1,4 @@
 <script>
-	import { createEventDispatcher } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { dndzone } from 'svelte-dnd-action';
 	import { flip } from 'svelte/animate';
@@ -15,7 +14,7 @@
 	 */
 	export let color;
 	export let id = 0;
-	export let index = 0;
+	export let position = 0;
 	export let tierListLength = 0;
 
 	/**
@@ -81,7 +80,7 @@
 		class="btn-group-vertical flex flex-col justify-center items-center"
 		style="border-radius: 0px;"
 	>
-		{#if index !== 0}
+		{#if position < tierListLength - 1}
 			<form method="POST" action="?/move" use:enhance>
 				<input type="hidden" name="tierId" value={id} />
 				<input type="hidden" name="direction" value="up" />
@@ -90,7 +89,7 @@
 				</button>
 			</form>
 		{/if}
-		{#if index !== tierListLength - 1}
+		{#if position > 0}
 			<form method="POST" action="?/move" use:enhance>
 				<input type="hidden" name="tierId" value={id} />
 				<input type="hidden" name="direction" value="down" />

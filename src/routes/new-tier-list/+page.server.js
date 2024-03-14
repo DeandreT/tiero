@@ -3,7 +3,6 @@ import { createTierList } from '$lib/tiers/tiers';
 
 export const load = async () => {
 	const newListResp = await createTierList();
-	// Handle promise
 	if (!newListResp.success) {
 		return;
 	}

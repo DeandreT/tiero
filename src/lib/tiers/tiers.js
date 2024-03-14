@@ -98,8 +98,7 @@ export async function addTier(listId, position) {
 				maxPos: sql`IFNULL(MAX(position), 0) as maxPos`
 			})
 			.from(tiers)
-			.where(eq(tiers.listId, listId))
-			.execute();
+			.where(and(eq(tiers.listId, listId), isNull(tiers.deleted)));
 		const maxPos = Number(maxPosResult[0]?.maxPos ?? 0);
 		newPosition = maxPos + 1;
 	} else if (position === 'down') {
@@ -109,8 +108,7 @@ export async function addTier(listId, position) {
 				minPos: sql`IFNULL(MIN(position), 0) as minPos`
 			})
 			.from(tiers)
-			.where(eq(tiers.listId, listId))
-			.execute();
+			.where(and(eq(tiers.listId, listId), isNull(tiers.deleted)));
 		const minPos = Number(minPosResult[0]?.minPos ?? 0);
 		newPosition = minPos - 1;
 	} else {
@@ -199,7 +197,7 @@ export async function moveTier(tierId, direction) {
 			position: tiers.position
 		})
 		.from(tiers)
-		.where(eq(tiers.id, tierId));
+		.where(and(eq(tiers.id, tierId), isNull(tiers.deleted)));
 	if (!validRes || !validRes[0]?.id) {
 		throw new Error('Tier does not exist');
 	}
@@ -212,7 +210,7 @@ export async function moveTier(tierId, direction) {
 			id: tiers.id
 		})
 		.from(tiers)
-		.where(and(eq(tiers.listId, listId), eq(tiers.position, newPosition)));
+		.where(and(eq(tiers.listId, listId), eq(tiers.position, newPosition), isNull(tiers.deleted)));
 	const swapTierId = newPosRes[0]?.id;
 
 	if (!swapTierId) {
@@ -249,6 +247,31 @@ export async function moveTier(tierId, direction) {
 	}
 	return { success: true, id: listId, data: tierListResp.data };
 }
+
+/**
+ * @param {number} tierId
+ * @param {Partial<Tier>} data
+ */
+export const updateTier = async (tierId, data) => {
+	const timestamp = Math.floor(Date.now() / 1000);
+	const res = await db
+		.update(tiers)
+		.set({
+			...data,
+			lastUpdated: timestamp
+		})
+		.where(eq(tiers.id, tierId))
+		.returning({ id: tiers.id, listId: tiers.listId });
+	if (!res || !res[0]?.id) {
+		throw new Error('Failed to update tier');
+	}
+	const { listId } = res[0];
+	const tierListResp = await getTierList(listId);
+	if (!tierListResp.success) {
+		throw new Error('Failed to retrieve tier list');
+	}
+	return { success: true, id: listId, data: tierListResp.data };
+};
 
 export async function getTierListSummaries() {
 	const res = db
