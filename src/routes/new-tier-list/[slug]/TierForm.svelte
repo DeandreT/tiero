@@ -1,6 +1,7 @@
 <script>
 	import { enhance } from '$app/forms';
 	import Icon from '@iconify/svelte';
+
 	/**
 	 * @type {string}
 	 */
@@ -10,13 +11,13 @@
 	 */
 	export let position; // 'up' or 'down'
 	/**
-	 * @type {import('$lib/tiers').Tier[]}
+	 * @type {import('$lib/tiers/tiers').Tier[]}
 	 */
 	export let tiers;
   /**
-	 * @type {number}
+	 * @type {number | null}
 	 */
-   export let listID;
+   export let listId;
 
 
 	const getPositionValue = () => {
@@ -29,8 +30,8 @@
 
 <form method="POST" action={`?/${action}`} use:enhance>
 	<input type="hidden" name="position" value={position} />
-	<input type="hidden" name="listID" value={listID} />
-	<input type="hidden" name="tierID" value={tiers[getPositionValue()]?.id} />
+	<input type="hidden" name="listId" value={listId} />
+	<input type="hidden" name="tierId" value={tiers[getPositionValue()]?.id} />
 	<button class={tierButtonClass}>
 		<Icon style={tierButtonStyle} icon={`mdi:${action === 'add' ? 'plus' : 'minus'}`} />
 		<Icon style={tierButtonStyle} icon={`mdi:chevron-${position}`} />

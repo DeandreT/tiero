@@ -1,26 +1,26 @@
-import { getTierList, addTier, removeTier, moveTier } from '$lib/tiers';
+import { getTierList, addTier, removeTier, moveTier } from '$lib/tiers/tiers';
 
 export const load = async ({ params }) => {
   const { slug } = params;
   const resp = await getTierList(parseInt(slug));
   if(!resp.success) {
-    return { success: false, id: null, tiers: [] };
+    return { success: false, id: null, tierList: null };
   }
-  return { success: true, id: slug, tiers: resp.data };
+  return { success: true, id: slug, tierList: resp.data };
 }
 
 export const actions = {
   add: async ({ request }) => {
     try {
       const data = await request.formData();
-      const listID = data.get('listID');
+      const listId = data.get('listId');
       const position = data.get('position');
-      if (!listID) {
+      if (!listId) {
         throw new Error('No list ID provided');
       }
 
       // @ts-ignore
-      await addTier(listID, position);
+      await addTier(listId, position);
       return { success: true };
     } catch (err) {
       console.error(err);
@@ -30,10 +30,10 @@ export const actions = {
   remove: async ({ request }) => {
     try {
       const data = await request.formData();
-      const tierID = data.get('tierID');
+      const tierId = data.get('tierId');
 
       // @ts-ignore
-      await removeTier(tierID);
+      await removeTier(tierId);
       return { success: true };
     } catch (err) {
       console.error(err);
@@ -43,11 +43,11 @@ export const actions = {
   move: async ({ request }) => {
     try {
       const data = await request.formData();
-      const tierID = data.get('tierID');
+      const tierId = data.get('tierId');
       const direction = data.get('direction');
 
       // @ts-ignore
-      await moveTier(tierID, direction);
+      await moveTier(tierId, direction);
       return { success: true };
     } catch (err) {
       console.error(err);

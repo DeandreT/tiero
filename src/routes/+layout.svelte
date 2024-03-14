@@ -13,7 +13,6 @@
 		initializeStores
 	} from '@skeletonlabs/skeleton';
 
-	// @ts-ignore
 	import Icon from '@iconify/svelte';
 	import astra from '$lib/assets/astra.svg';
 
@@ -23,13 +22,9 @@
 	import hljs from 'highlight.js/lib/core';
 	import 'highlight.js/styles/github-dark.css';
 	import { storeHighlightJs } from '@skeletonlabs/skeleton';
-	// @ts-ignore
 	import xml from 'highlight.js/lib/languages/xml'; // for HTML
-	// @ts-ignore
 	import css from 'highlight.js/lib/languages/css';
-	// @ts-ignore
 	import javascript from 'highlight.js/lib/languages/javascript';
-	// @ts-ignore
 	import typescript from 'highlight.js/lib/languages/typescript';
 
 	hljs.registerLanguage('xml', xml); // for HTML
@@ -43,9 +38,8 @@
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	// Import modals
-	import SettingsModal from '../lib/modals/SettingsModal.svelte';
+	import SettingsModal from '../lib/components/modals/SettingsModal.svelte';
 
-	// @ts-ignore
 	const settingsPopup = {
 		event: 'click',
 		placement: 'bottom-end',

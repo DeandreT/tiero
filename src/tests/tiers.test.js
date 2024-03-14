@@ -3,8 +3,8 @@ import { describe, it, expect } from 'vitest';
 
 describe('findUniqueTierColor', () => {
 	it('should return a unique tier color', async () => {
-		const listID = 1;
-		const color = await findUniqueTierColor(listID);
+		const listId = 1;
+		const color = await findUniqueTierColor(listId);
 		expect(typeof color).toBe('string');
 		expect(color).toMatch(/^#[0-9a-fA-F]{6}$/);
 	});
@@ -25,9 +25,9 @@ describe('createTierList', () => {
 describe('addTier', () => {
 	// TODO: Add test for position
   it('should add a tier to the list', async () => {
-    const listID = 1;
+    const listId = 1;
     const position = 'up';
-    const result = await addTier(listID, position);
+    const result = await addTier(listId, position);
 
     expect(result).toEqual({
       success: true,
@@ -39,12 +39,12 @@ describe('addTier', () => {
 
 describe('getTierList', () => {
 	it('should return the tier list with correct structure', async () => {
-		const listID = 1;
-		const result = await getTierList(listID);
+		const listId = 1;
+		const result = await getTierList(listId);
 
 		expect(result).toEqual({
 			success: true,
-			id: listID,
+			id: listId,
 			data: expect.arrayContaining([
 				expect.objectContaining({
 					id: expect.any(Number),

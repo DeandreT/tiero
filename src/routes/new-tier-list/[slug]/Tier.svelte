@@ -1,11 +1,9 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
 	import { enhance } from '$app/forms';
-	const dispatchEvent = createEventDispatcher();
 	import { dndzone } from 'svelte-dnd-action';
 	import { flip } from 'svelte/animate';
 	import Icon from '@iconify/svelte';
-
 	import Item from '$lib/components/Item.svelte';
 
 	/**
@@ -16,18 +14,9 @@
 	 * @type {string}
 	 */
 	export let color;
-	/**
-	 * @type {string}
-	 */
-	export let id;
-	/**
-	 * @type {number}
-	 */
-	export let index;
-	/**
-	 * @type {number}
-	 */
-	export let tierListLength;
+	export let id = 0;
+	export let index = 0;
+	export let tierListLength = 0;
 
 	/**
 	 * @type {Array<{name: string, image: string, id: string}>}
@@ -35,17 +24,25 @@
 	export let items;
 
 	/**
-	 * @param {{ detail: { items: { name: string; image: string; id: string; }[]; }; }} e
+	 * @param {{ detail: { items: import('$lib/tiers/tiers').Item[]; }; }} e
 	 */
 	function handleConsider(e) {
-		items = e.detail.items;
+		items = e.detail.items.map((item) => ({
+			name: item.name,
+			image: item.image,
+			id: item.id.toString()
+		}));
 	}
 
 	/**
-	 * @param {{ detail: { items: { name: string; image: string; id: string; }[]; }; }} e
+	 * @param {{ detail: { items: import('$lib/tiers/tiers').Item[]; }; }} e
 	 */
 	function handleFinalize(e) {
-		items = e.detail.items;
+		items = e.detail.items.map((item) => ({
+			name: item.name,
+			image: item.image,
+			id: item.id.toString()
+		}));
 	}
 
 	const tierRowClass =
@@ -57,7 +54,7 @@
 <div class={tierRowClass}>
 	<div class={labelClass} style="background-color: {color}">
 		<form method="POST" action="?/remove" use:enhance>
-			<input type="hidden" name="tierID" value={id} />
+			<input type="hidden" name="tierId" value={id} />
 			<button class="absolute left-0 top-0 text-black">
 				<Icon icon="mdi:close" />
 			</button>
@@ -86,7 +83,7 @@
 	>
 		{#if index !== 0}
 			<form method="POST" action="?/move" use:enhance>
-				<input type="hidden" name="tierID" value={id} />
+				<input type="hidden" name="tierId" value={id} />
 				<input type="hidden" name="direction" value="up" />
 				<button class="btn-icon-xl">
 					<Icon icon="mdi:chevron-up" />
@@ -95,7 +92,7 @@
 		{/if}
 		{#if index !== tierListLength - 1}
 			<form method="POST" action="?/move" use:enhance>
-				<input type="hidden" name="tierID" value={id} />
+				<input type="hidden" name="tierId" value={id} />
 				<input type="hidden" name="direction" value="down" />
 				<button class="btn-icon-xl">
 					<Icon icon="mdi:chevron-down" />
