@@ -2,17 +2,17 @@
 	import TierList from './TierList.svelte';
 
 	/**
-	 * @type {{success: boolean, tiers: import('$lib/tiers').Tier[]}}
+	 * @type {{success: boolean, tierList: import('$lib/tiers/tiers').TierList}}
 	 */
 	export let data;
 
 	/**
-	 * @type {import('$lib/tiers').Tier[]}
+	 * @type {import('$lib/tiers/tiers').Tier[]}
 	 */
 	let tiers = [];
 
-	if (data.success) {
-		tiers = data.tiers;
+	$: if (data.success) {
+		tiers = data.tierList.tiers;
 	}
 </script>
 

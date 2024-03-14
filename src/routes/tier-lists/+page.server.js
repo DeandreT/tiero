@@ -1,7 +1,6 @@
-import { getTierListSummaries } from "$lib/tiers/tiers";
-
+import { getTierListSummaries } from '$lib/tiers/tiers';
 
 export async function load() {
-  const tierLists = await getTierListSummaries();
-  return { success: true, tierLists };
+	const tierLists = await getTierListSummaries();
+	return { success: true, tierLists };
 }
