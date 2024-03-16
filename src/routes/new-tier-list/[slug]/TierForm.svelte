@@ -1,39 +1,29 @@
-<script>
+<script lang="ts">
 	import { enhance } from '$app/forms';
 	import Icon from '@iconify/svelte';
+	import type { Tier } from '$lib/tiers/tiers';
 
-	/**
-	 * @type {string}
-	 */
-	export let action; // 'add' or 'remove'
-	/**
-	 * @type {string}
-	 */
-	export let position; // 'up' or 'down'
-	/**
-	 * @type {import('$lib/tiers/tiers').Tier[]}
-	 */
-	export let tiers;
-  /**
-	 * @type {number | null}
-	 */
-   export let listId;
+	export let action: 'add' | 'remove';
+	export let position: 'up' | 'down';
+	export let tiers: Tier[];
+	export let listId: string;
 
-
-	const getPositionValue = () => {
-		return position === 'up' ? 0 : tiers.length - (action === 'add' ? 0 : 1);
-	};
-
-	const tierButtonClass = 'btn variant-filled flex-col justify-center items-center';
-	const tierButtonStyle = 'margin: 0 !important';
+	$: positionValue = position === 'up' ? 0 : tiers.length - (action === 'add' ? 0 : 1);
+	$: icon = action === 'add' ? 'plus' : 'minus';
 </script>
 
 <form method="POST" action={`?/${action}`} use:enhance>
-	<input type="hidden" name="position" value={position} />
-	<input type="hidden" name="listId" value={listId} />
-	<input type="hidden" name="tierId" value={tiers[getPositionValue()]?.id} />
-	<button class={tierButtonClass}>
-		<Icon style={tierButtonStyle} icon={`mdi:${action === 'add' ? 'plus' : 'minus'}`} />
-		<Icon style={tierButtonStyle} icon={`mdi:chevron-${position}`} />
+	{#if action === 'add'}
+		<input type="hidden" name="position" value={position} />
+		<input type="hidden" name="listId" value={listId} />
+	{:else if action === 'remove'}
+		<input type="hidden" name="tierId" value={tiers[positionValue]?.id} />
+	{/if}
+	<button
+		class="btn variant-filled flex-col justify-center items-center"
+		style="margin: 0 !important"
+	>
+		<Icon style="margin: 0 !important" icon={`mdi:${icon}`} />
+		<Icon style="margin: 0 !important" icon={`mdi:chevron-${position}`} />
 	</button>
 </form>

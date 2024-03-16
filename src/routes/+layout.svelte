@@ -1,5 +1,12 @@
 <script>
-	// @ts-nocheck
+	//@ts-nocheck
+	import hljs from 'highlight.js/lib/core';
+	import 'highlight.js/styles/github-dark.css';
+	import { storeHighlightJs } from '@skeletonlabs/skeleton';
+	import xml from 'highlight.js/lib/languages/xml'; // for HTML
+	import css from 'highlight.js/lib/languages/css';
+	import javascript from 'highlight.js/lib/languages/javascript';
+	import typescript from 'highlight.js/lib/languages/typescript';
 	import '../app.postcss';
 	import {
 		AppShell,
@@ -12,20 +19,12 @@
 		getModalStore,
 		initializeStores
 	} from '@skeletonlabs/skeleton';
-
+	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import Icon from '@iconify/svelte';
 	import astra from '$lib/assets/astra.svg';
-
 	import { page } from '$app/stores';
-
-	// Highlight JS
-	import hljs from 'highlight.js/lib/core';
-	import 'highlight.js/styles/github-dark.css';
-	import { storeHighlightJs } from '@skeletonlabs/skeleton';
-	import xml from 'highlight.js/lib/languages/xml'; // for HTML
-	import css from 'highlight.js/lib/languages/css';
-	import javascript from 'highlight.js/lib/languages/javascript';
-	import typescript from 'highlight.js/lib/languages/typescript';
+	import SettingsModal from '$lib/components/modals/SettingsModal.svelte';
+	import AuthModal from '$lib/components/modals/AuthModal.svelte';
 
 	hljs.registerLanguage('xml', xml); // for HTML
 	hljs.registerLanguage('css', css);
@@ -34,11 +33,16 @@
 	storeHighlightJs.set(hljs);
 
 	// Floating UI for Popups
-	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
-	// Import modals
-	import SettingsModal from '../lib/components/modals/SettingsModal.svelte';
+	initializeStores();
+
+	const modalStore = getModalStore();
+
+	const modalRegistry = {
+		settingsModal: { ref: SettingsModal },
+		authModal: { ref: AuthModal }
+	};
 
 	const settingsPopup = {
 		event: 'click',
@@ -46,18 +50,16 @@
 		target: 'settingsMenu'
 	};
 
-	initializeStores();
-
-	const modalStore = getModalStore();
-
-	const modalRegistry = {
-		settingsModal: { ref: SettingsModal }
-	};
-
 	const settingsModal = {
 		type: 'component',
 		component: 'settingsModal',
 		title: 'Settings'
+	};
+
+	const authModal = {
+		type: 'component',
+		component: 'authModal',
+		title: 'Sign In'
 	};
 </script>
 
@@ -103,9 +105,9 @@
 					<nav class="list-nav">
 						<ul>
 							<li>
-								<a href="/account" class="text-lg">
+								<button class="text-lg" on:click={() => modalStore.trigger(authModal)}>
 									<Icon icon="mdi:account" />
-								</a>
+								</button>
 							</li>
 							<li>
 								<button class="text-lg" on:click={() => modalStore.trigger(settingsModal)}>

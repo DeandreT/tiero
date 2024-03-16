@@ -4,6 +4,7 @@
 declare namespace App {
 	interface Locals {
 		db: any;
+		user: any;
 	}
 	// interface PageData {}
 	// interface Error {}

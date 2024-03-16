@@ -10,17 +10,20 @@ export const load = async ({ params }) => {
 };
 
 export const actions = {
-	add: async ({ request }) => {
+	add: async ({  request }) => {
 		try {
 			const data = await request.formData();
 			const listId = data.get('listId');
-			const position = data.get('position');
+			let position = data.get('position');
+
 			if (!listId) {
 				throw new Error('No list ID provided');
 			}
+			if (!position || (position !== 'up' && position !== 'down')) {
+				position = 'up';
+			}
 
-			// @ts-ignore
-			await addTier(listId, position);
+			await addTier(Number(listId), position);
 			return { success: true };
 		} catch (err) {
 			console.error(err);

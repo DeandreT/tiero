@@ -16,8 +16,15 @@
 	}
 </script>
 
-{#if data}
+{#if data.success && tierList}
 	<div class="container h-full mx-auto flex justify-center items-center w-full">
 		<TierList {tierList} listId={listId} />
+	</div>
+{:else}
+	<div class="container h-full mx-auto flex justify-center items-center">
+		<div class="space-y-10 text-center flex flex-col items-center">
+			<p class="text-2xl font-bold">Tier List Not Found</p>
+			<p class="text-lg">The tier list you are looking for does not exist.</p>
+		</div>
 	</div>
 {/if}

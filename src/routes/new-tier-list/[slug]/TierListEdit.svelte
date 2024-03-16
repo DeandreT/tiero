@@ -45,12 +45,13 @@
 		});
 	}
 
-	$: tiers = tierList.tiers.map((tier) => {
+	$: tiers = tierList?.tiers?.map((tier) => {
 		return {
 			...tier,
 			tierId: tier.id
 		};
 	});
+
 </script>
 
 <div

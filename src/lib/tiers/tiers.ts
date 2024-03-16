@@ -1,20 +1,18 @@
-import { tiers, lists } from '../schema/tiers';
-import { dDb as db } from '$lib/db';
+import { tiers, lists } from '../db/schema/tiers';
+import type { Tier, TierList } from '../db/schema/tiers';
+import { dDb as db } from '$lib/db/db';
 import { and, desc, eq, isNull, sql } from 'drizzle-orm';
 
-/**
- * @typedef {import('$lib/schema/tiers').Tier} Tier
- * @typedef {import('$lib/schema/tiers').Item} Item
- * @typedef {import('$lib/schema/tiers').TierList} TierList
- */
+interface TierListSummary {
+	id: number;
+	name: string;
+	description: string;
+	lastUpdated: number;
+	deleted: number | null;
+	numTiers: number;
+}
 
-/**
- * Finds a unique tier color for a given list ID.
- *
- * @param {number} listId - The ID of the tier list.
- * @returns {Promise<string>} - A string containing the hex color code of the unique tier color
- */
-export async function findUniqueTierColor(listId) {
+export async function findUniqueTierColor(listId: number): Promise<string> {
 	const tiersResp = await getTierList(listId);
 	if (!tiersResp.success) {
 		throw new Error('Failed to retrieve tier list');
@@ -35,12 +33,9 @@ export async function findUniqueTierColor(listId) {
 	return color;
 }
 
-/**
- * Retrieves a tier list with its associated tiers and items from the database.
- * @param {number} listId - The ID of the list to retrieve.
- * @returns {Promise<{ success: boolean, id: number | null, data: TierList | null }>} - An object containing the success status, the ID of the list, and the retrieved data.
- */
-export async function getTierList(listId) {
+export async function getTierList(
+	listId: number
+): Promise<{ success: boolean; id: number | null; data: TierList | null }> {
 	const res = await db.query.lists.findMany({
 		with: {
 			tiers: {
@@ -61,7 +56,11 @@ export async function getTierList(listId) {
 	return { success: true, id: listId, data: res[0] };
 }
 
-export async function createTierList() {
+export async function createTierList(): Promise<{
+	success: boolean;
+	id: number | null;
+	data: TierList | null;
+}> {
 	const timestamp = Math.floor(Date.now() / 1000);
 	const res = await db
 		.insert(lists)
@@ -77,18 +76,23 @@ export async function createTierList() {
 
 	const tierList = await getTierList(res[0].insertedID);
 	if (!tierList.success) {
-		return { success: false, id: null, data: [] };
+		return { success: false, id: null, data: null };
 	}
 	return { success: true, id: res[0].insertedID, data: tierList.data };
 }
 
-/**
- * @param {number} listId
- * @param {string} position
- */
-export async function addTier(listId, position) {
+export async function addTier(
+	listId: number,
+	position = 'up'
+): Promise<{
+	success: boolean;
+	id: number | null;
+	data: TierList | null;
+}> {
 	const timestamp = Math.floor(Date.now() / 1000);
-
+	if (position !== 'up' && position !== 'down') {
+		position = 'up';
+	}
 	// Determine the new position for the tier
 	let newPosition;
 	if (position === 'up') {
@@ -112,7 +116,7 @@ export async function addTier(listId, position) {
 		const minPos = Number(minPosResult[0]?.minPos ?? 0);
 		newPosition = minPos - 1;
 	} else {
-		return { success: false, id: null, data: [], error: 'Invalid position' };
+		return { success: false, id: null, data: null };
 	}
 
 	if (newPosition < 0) {
@@ -138,28 +142,29 @@ export async function addTier(listId, position) {
 			description: 'This is a new tier',
 			lastUpdated: timestamp,
 			created: timestamp,
-			createdBy: 1,
-			updatedBy: 1
+			createdBy: 2,
+			updatedBy: 2
 		})
 		.returning({ insertedID: tiers.id });
 
 	if (!insertRes || !insertRes[0]?.insertedID) {
-		return { success: false, id: null, data: [], error: 'Failed to insert tier' };
+		return { success: false, id: null, data: null };
 	}
 
 	// Retrieve the updated tier list
 	const tierListResp = await getTierList(listId);
 	if (!tierListResp.success) {
-		return { success: false, id: null, data: [], error: 'Failed to retrieve tier list' };
+		return { success: false, id: null, data: null };
 	}
 
 	return { success: true, id: listId, data: tierListResp.data };
 }
 
-/**
- * @param {number} tierId
- */
-export async function removeTier(tierId) {
+export async function removeTier(tierId: number): Promise<{
+	success: boolean;
+	id: number | null;
+	data: TierList | null;
+}> {
 	const timestamp = Math.floor(Date.now() / 1000);
 	let res = await db
 		.update(tiers)
@@ -182,11 +187,14 @@ export async function removeTier(tierId) {
 	return { success: true, id: listId, data: tierListResp.data };
 }
 
-/**
- * @param {number} tierId
- * @param {string} direction
- */
-export async function moveTier(tierId, direction) {
+export async function moveTier(
+	tierId: number,
+	direction: 'up' | 'down'
+): Promise<{
+	success: boolean;
+	id: number | null;
+	data: TierList | null;
+}> {
 	const timestamp = Math.floor(Date.now() / 1000);
 
 	// Validate tier exists
@@ -248,11 +256,14 @@ export async function moveTier(tierId, direction) {
 	return { success: true, id: listId, data: tierListResp.data };
 }
 
-/**
- * @param {number} tierId
- * @param {Partial<Tier>} data
- */
-export const updateTier = async (tierId, data) => {
+export const updateTier = async (
+	tierId: number,
+	data: Partial<Tier>
+): Promise<{
+	success: boolean;
+	id: number | null;
+	data: TierList | null;
+}> => {
 	const timestamp = Math.floor(Date.now() / 1000);
 	const res = await db
 		.update(tiers)
@@ -273,7 +284,7 @@ export const updateTier = async (tierId, data) => {
 	return { success: true, id: listId, data: tierListResp.data };
 };
 
-export async function getTierListSummaries() {
+export async function getTierListSummaries(): Promise<TierListSummary[]> {
 	const res = db
 		.select({
 			id: lists.id,
@@ -281,13 +292,12 @@ export async function getTierListSummaries() {
 			description: lists.description,
 			lastUpdated: lists.lastUpdated,
 			deleted: lists.deleted,
-			numTiers: sql`COUNT(tiers.id) as numTiers`
+			numTiers: sql<number>`COUNT(tiers.id) as numTiers`
 		})
 		.from(lists)
 		.leftJoin(tiers, and(eq(tiers.listId, lists.id), isNull(tiers.deleted)))
 		.where(isNull(lists.deleted))
 		.groupBy(lists.id)
 		.orderBy(desc(lists.lastUpdated));
-
 	return res;
 }
