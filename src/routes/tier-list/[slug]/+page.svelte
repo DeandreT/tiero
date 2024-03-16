@@ -2,12 +2,12 @@
 	import TierList from './TierList.svelte';
 
 	/**
-	 * @type {{success: boolean, tierList: import('$lib/tiers/tiers').TierList}}
+	 * @type {{success: boolean, tierList: import('$lib/db/schema/tiers').TierList}}
 	 */
 	export let data;
 
 	/**
-	 * @type {import('$lib/tiers/tiers').Tier[]}
+	 * @type {import('$lib/db/schema/tiers').Tier[]}
 	 */
 	let tiers = [];
 

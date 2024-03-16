@@ -1,43 +1,31 @@
-<script>
+<script lang="ts">
 	import { enhance } from '$app/forms';
 	import { dndzone } from 'svelte-dnd-action';
 	import { flip } from 'svelte/animate';
 	import Icon from '@iconify/svelte';
 	import Item from '$lib/components/Item.svelte';
+	import type { HexColor } from '$lib/tiers/tiers';
+	import type { Item as ItemT } from '$lib/db/schema/tiers';
 
-	/**
-	 * @type {string}
-	 */
-	export let name;
-	/**
-	 * @type {string}
-	 */
-	export let color;
+	export let name: string;
+
+	export let color: HexColor;
 	export let id = 0;
 	export let position = 0;
 	export let tierListLength = 0;
 
-	/**
-	 * @type {Array<{name: string, image: string, id: string}>}
-	 */
-	export let items;
+	export let items: ItemT[];
 
-	/**
-	 * @param {{ detail: { items: import('$lib/tiers/tiers').Item[]; }; }} e
-	 */
-	function handleConsider(e) {
-		items = e.detail.items.map((item) => ({
+	function handleConsider(e: CustomEvent) {
+		items = e.detail.items.map((item: ItemT) => ({
 			name: item.name,
 			image: item.image,
 			id: item.id.toString()
 		}));
 	}
 
-	/**
-	 * @param {{ detail: { items: import('$lib/tiers/tiers').Item[]; }; }} e
-	 */
-	function handleFinalize(e) {
-		items = e.detail.items.map((item) => ({
+	function handleFinalize(e: CustomEvent) {
+		items = e.detail.items.map((item: ItemT) => ({
 			name: item.name,
 			image: item.image,
 			id: item.id.toString()

@@ -3,7 +3,7 @@ import type { Tier, TierList } from '../db/schema/tiers';
 import { dDb as db } from '$lib/db/db';
 import { and, desc, eq, isNull, sql } from 'drizzle-orm';
 
-interface TierListSummary {
+export type TierListSummary = {
 	id: number;
 	name: string;
 	description: string;
@@ -11,6 +11,8 @@ interface TierListSummary {
 	deleted: number | null;
 	numTiers: number;
 }
+
+export type HexColor = `#${string}`;
 
 export async function findUniqueTierColor(listId: number): Promise<string> {
 	const tiersResp = await getTierList(listId);
@@ -21,7 +23,7 @@ export async function findUniqueTierColor(listId: number): Promise<string> {
 		throw new Error('No tier list found');
 	}
 	const tiers = tiersResp.data.tiers;
-	let color = '#ff0000';
+	let color: HexColor = '#ff0000'
 	while (tiers.some((tier) => tier.color === color)) {
 		// Generate a random number and pad it to ensure 6 characters
 		color =

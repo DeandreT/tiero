@@ -55,10 +55,10 @@ export const actions = {
 			if (!tierId) {
 				throw new Error('No tier ID provided');
 			}
-			if (!direction) {
+			if (!direction || (direction !== 'up' && direction !== 'down')) {
 				throw new Error('No direction provided');
 			}
-			await moveTier(Number(tierId), String(direction));
+			await moveTier(Number(tierId), direction);
 			return { success: true };
 		} catch (err) {
 			console.error(err);

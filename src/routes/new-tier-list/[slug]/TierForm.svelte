@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Icon from '@iconify/svelte';
-	import type { Tier } from '$lib/tiers/tiers';
+	import type { Tier } from '$lib/db/schema/tiers';
 
 	export let action: 'add' | 'remove';
 	export let position: 'up' | 'down';

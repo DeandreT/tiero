@@ -1,12 +1,6 @@
-<script>
-	/**
-	 * @type {string}
-	 */
-	export let name;
-	/**
-	 * @type {string}
-	 */
-	export let image;
+<script lang="ts">
+	export let name: string;
+	export let image: string;
 </script>
 
 {#if name}

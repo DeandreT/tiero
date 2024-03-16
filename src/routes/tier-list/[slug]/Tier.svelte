@@ -1,20 +1,10 @@
-<script>
-	import Icon from '@iconify/svelte';
+<script lang="ts">
 	import Item from '$lib/components/Item.svelte';
+	import type { HexColor } from '$lib/tiers/tiers';
 
-	/**
-	 * @type {string}
-	 */
-	export let name;
-	/**
-	 * @type {string}
-	 */
-	export let color;
-
-	/**
-	 * @type {Array<{name: string, image: string, id: string}>}
-	 */
-	export let items = [];
+	export let name: string;
+	export let color: HexColor;
+	export let items: Item[];
 
 	const tierRowClass =
 		'tier-row w-full flex flex-row border border-1 border-black h-28 bg-zinc-900';

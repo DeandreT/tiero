@@ -4,7 +4,7 @@
 
 	export let data;
 	/**
-	 * @type {import('$lib/tiers/tiers').TierList}
+	 * @type {import('$lib/db/schema/tiers').TierList}
 	 */
 	let tierList;
 	/**
